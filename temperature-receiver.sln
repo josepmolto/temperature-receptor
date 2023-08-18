@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Temperature.Receiver", "src\Temperature.Receiver.csproj", "{E9214527-331F-47BE-A82E-6032440D67DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Temperature.Receiver", "test\Tests.Temperature.Receiver.csproj", "{E388CCAD-4D65-4FDC-B720-A3DC32B77719}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E9214527-331F-47BE-A82E-6032440D67DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9214527-331F-47BE-A82E-6032440D67DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9214527-331F-47BE-A82E-6032440D67DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9214527-331F-47BE-A82E-6032440D67DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E388CCAD-4D65-4FDC-B720-A3DC32B77719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E388CCAD-4D65-4FDC-B720-A3DC32B77719}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E388CCAD-4D65-4FDC-B720-A3DC32B77719}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E388CCAD-4D65-4FDC-B720-A3DC32B77719}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
