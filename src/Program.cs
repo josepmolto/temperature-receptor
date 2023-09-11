@@ -11,7 +11,7 @@ using (var mqttClient = mqttFactory.CreateMqttClient())
     mqttClient.ApplicationMessageReceivedAsync += e =>
     {
         Console.WriteLine("Received application message.");
-        var message = e.ApplicationMessage.ConvertPayloadToString();
+        var message = e.ApplicationMessage.Payload;
 
         Console.WriteLine(message);
 
