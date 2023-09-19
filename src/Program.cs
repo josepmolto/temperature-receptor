@@ -2,8 +2,6 @@
 using MQTTnet.Client;
 using Temperature.Receiver.Model;
 
-
-
 var mqttFactory = new MqttFactory();
 var decoder = new Decoder();
 
