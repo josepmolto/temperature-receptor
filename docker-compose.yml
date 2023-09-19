@@ -6,46 +6,24 @@ services:
     environment:
       - TZ=Europe/Madrid
     volumes:
-      - /home/josep/mosquitto/volumes/config:/mosquitto/config
-      - /home/josep/mosquitto/volumes/data:/mosquitto/data
-      - /home/josep/mosquitto/volumes/log:/mosquitto/log
+      - D:\Documents\Projects\mosquitto\volumes\config:/mosquitto/config
+      - D:\Documents\Projects\mosquitto\volumes\data:/mosquitto/data
+      - D:\Documents\Projects\mosquitto\volumes\log:/mosquitto/log
     ports:
       - 1883:1883
       - 9001:9001
     restart: unless-stopped
+    networks:
+      - thermometer-network
 
   receiver:
     build:
       dockerfile: ./src/Dockerfile
       context: ./
-    ports:
-      - "7001:80" # Dapr instances communicate over gRPC so we need to expose the gRPC port
     depends_on:
       - mosquitto
     networks:
-      - dapr-network
-
-  receiver-dapr:
-    image: "daprio/daprd:edge-stablecomponents"
-    command:
-      [
-        "./daprd",
-        "-app-id",
-        "receiver",
-        "-app-port",
-        "80",
-        "-dapr-http-port",
-        "60001",
-        "-dapr-grpc-port",
-        "60000",
-        "-components-path",
-        "/components",
-      ]
-    volumes:
-      - "./components/:/components" # Mount our components folder for the runtime to use
-    depends_on:
-      - receiver
-    network_mode: "service:receiver" # Attach the nodeapp-dapr service to the nodeapp network namespace
+      - thermometer-network
 
 networks:
-  dapr-network: null
+  thermometer-network: null
