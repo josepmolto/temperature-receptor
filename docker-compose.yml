@@ -6,9 +6,9 @@ services:
     environment:
       - TZ=Europe/Madrid
     volumes:
-      - D:\Documents\Projects\mosquitto\volumes\config:/mosquitto/config
-      - D:\Documents\Projects\mosquitto\volumes\data:/mosquitto/data
-      - D:\Documents\Projects\mosquitto\volumes\log:/mosquitto/log
+      - /mnt/d/Documents/Projects/mosquitto/volumes/config:/mosquitto/config
+      - /mnt/d/Documents/Projects/mosquitto/volumes/data:/mosquitto/data
+      - /mnt/d/Documents/Projects/mosquitto/volumes/log:/mosquitto/log
     ports:
       - 1883:1883
       - 9001:9001
@@ -24,6 +24,24 @@ services:
       - mosquitto
     networks:
       - thermometer-network
+
+  rtl_433:
+    image: hertzg/rtl_433:master-alpine-3.18.3
+    depends_on:
+      - mosquitto
+    networks:
+      - thermometer-network
+    devices:
+      - "/dev/bus/usb/001/002"
+    command:
+      - "-f"
+      - "868M"
+      - "-R"
+      - "0"
+      - "-X"
+      - "n=Ecowitt,m=FSK_PCM,s=58,l=58,r=59392,bits=169"
+      - "-F"
+      - "mqtt://mosquitto,retain=0,events=rtl_433/Ecowitt"
 
 networks:
   thermometer-network: null
