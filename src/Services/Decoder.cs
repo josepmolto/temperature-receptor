@@ -13,17 +13,17 @@ public class Decoder : IDecoder
         var weatherInformation = new WeatherInformation()
         {
             Temperature = DecodeTemperature(message),
-            Humidity = DecodeHumidity()
+            Humidity = DecodeHumidity(message)
         };
 
         return Task.FromResult(weatherInformation);
     }
 
-    private Message Deserialize(ArraySegment<byte> messageBytes)
+    private static Message Deserialize(ArraySegment<byte> messageBytes)
     {
         var options = CreateJsonSerializerOptions();
 
-        var message = JsonSerializer.Deserialize<Message>(messageBytes, CreateJsonSerializerOptions());
+        var message = JsonSerializer.Deserialize<Message>(messageBytes, options);
 
         return message;
 
@@ -34,7 +34,7 @@ public class Decoder : IDecoder
             };
     }
 
-    private float DecodeTemperature(Message message)
+    private static float DecodeTemperature(Message message)
     {
         var temperatureHex = message.Rows.First().Data?[30..32];
 
@@ -45,6 +45,14 @@ public class Decoder : IDecoder
         return TemperatureReferenceValue.real - difference;
     }
 
-    private float DecodeHumidity() =>
-        60f;
+    private static float DecodeHumidity(Message message)
+    {
+        var humidityHex = message.Rows.First().Data?[23..25];
+
+        var rawIntValue = Convert.ToInt32(humidityHex, 16);
+
+        var binaryValue = Convert.ToString(rawIntValue, 2)[..^1]; //remove last character to get the humidity value
+
+        return Convert.ToInt32(binaryValue, 2);
+    }
 }

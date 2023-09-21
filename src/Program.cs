@@ -17,7 +17,7 @@ mqttClient.ApplicationMessageReceivedAsync += async e =>
 
     var weatherInformation = await decoder.DecodeMessageAsync(e.ApplicationMessage.PayloadSegment);
 
-    Console.WriteLine($"Temperature: {weatherInformation.Temperature}");
+    Console.WriteLine($"Temperature: {weatherInformation.Temperature} Humidity: {weatherInformation.Humidity}");
 
 };
 
