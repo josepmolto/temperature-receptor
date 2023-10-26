@@ -4,7 +4,7 @@ using Temperature.Receiver.Dto;
 namespace Temperature.Receiver.Model;
 public class Decoder : IDecoder
 {
-    private static (int raw, int real) TemperatureReferenceValue = (112, 28);
+    private static (int raw, float real) TemperatureReferenceValue = (118, 23f);
 
     public Task<WeatherInformation> DecodeMessageAsync(ArraySegment<byte> messageBytes)
     {
@@ -36,18 +36,21 @@ public class Decoder : IDecoder
 
     private static float DecodeTemperature(Message message)
     {
-        var temperatureHex = message.Rows.First().Data?[30..32];
+        var temperatureHex = message.Rows.First().Data?[21..24];
 
-        var rawDecimalTemperature = Convert.ToInt32(temperatureHex, 16);
+        var temperatureBinary = Convert.ToString(Convert.ToInt32(temperatureHex, fromBase: 16), toBase: 2);
 
-        var difference = (TemperatureReferenceValue.raw - rawDecimalTemperature) / (float)2 / 10;
+        //Discard the two first bits and the last bit
+        var temperatureRawInteger = Convert.ToInt64(temperatureBinary[2..^1], fromBase: 2);
 
-        return TemperatureReferenceValue.real - difference;
+        var difference = ((float)temperatureRawInteger - TemperatureReferenceValue.raw) / 10;
+
+        return TemperatureReferenceValue.real + difference;
     }
 
     private static float DecodeHumidity(Message message)
     {
-        var humidityHex = message.Rows.First().Data?[23..25];
+        var humidityHex = message.Rows.First().Data?[24..26];
 
         var rawIntValue = Convert.ToInt32(humidityHex, 16);
 

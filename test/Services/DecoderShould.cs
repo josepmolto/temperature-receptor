@@ -10,8 +10,8 @@ public class DecoderShould
         var messageBytes = await File.ReadAllBytesAsync("./samples/message.json").ConfigureAwait(false);
         var expectedResponse = new WeatherInformation()
         {
-            Humidity = 52,
-            Temperature = 26.6f
+            Humidity = 71,
+            Temperature = 26.7f
         };
         var sut = new Decoder();
 
