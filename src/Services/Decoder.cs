@@ -1,15 +1,13 @@
-using System.Text.Json;
 using Temperature.Receiver.Dto;
+using Temperature.Receiver.Model;
 
-namespace Temperature.Receiver.Model;
+namespace Temperature.Receiver.Services;
 public class Decoder : IDecoder
 {
     private static (int raw, float real) TemperatureReferenceValue = (118, 23f);
 
-    public Task<WeatherInformation> DecodeMessageAsync(ArraySegment<byte> messageBytes)
+    public Task<WeatherInformation> DecodeMessageAsync(Message message)
     {
-        var message = Deserialize(messageBytes);
-
         var weatherInformation = new WeatherInformation()
         {
             Temperature = DecodeTemperature(message),
@@ -17,21 +15,6 @@ public class Decoder : IDecoder
         };
 
         return Task.FromResult(weatherInformation);
-    }
-
-    private static Message Deserialize(ArraySegment<byte> messageBytes)
-    {
-        var options = CreateJsonSerializerOptions();
-
-        var message = JsonSerializer.Deserialize<Message>(messageBytes, options);
-
-        return message;
-
-        static JsonSerializerOptions CreateJsonSerializerOptions() =>
-            new()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
     }
 
     private static float DecodeTemperature(Message message)
@@ -48,7 +31,7 @@ public class Decoder : IDecoder
         return TemperatureReferenceValue.real + difference;
     }
 
-    private static float DecodeHumidity(Message message)
+    private static byte DecodeHumidity(Message message)
     {
         var humidityHex = message.Rows.First().Data?[24..26];
 
@@ -56,6 +39,6 @@ public class Decoder : IDecoder
 
         var binaryValue = Convert.ToString(rawIntValue, 2)[..^1]; //remove last character to get the humidity value
 
-        return Convert.ToInt32(binaryValue, 2);
+        return Convert.ToByte(binaryValue, 2);
     }
 }

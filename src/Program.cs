@@ -1,38 +1,34 @@
-﻿using MQTTnet;
-using MQTTnet.Client;
-using Temperature.Receiver.Model;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Temperature.Receiver.Config;
+using Temperature.Receiver.Services;
 
-var mqttFactory = new MqttFactory();
-var decoder = new Decoder();
-
-using var mqttClient = mqttFactory.CreateMqttClient();
-var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("mosquitto").Build();
-
-mqttClient.ApplicationMessageReceivedAsync += async e =>
+internal class Program
 {
-    Console.WriteLine("Received application message.");
+    private static async Task Main(string[] args)
+    {
+        var host = CreateHost();
 
-    var message = e.ApplicationMessage.ConvertPayloadToString();
-    Console.WriteLine(message);
+        await host.StartAsync().ConfigureAwait(false);
 
-    var weatherInformation = await decoder.DecodeMessageAsync(e.ApplicationMessage.PayloadSegment);
+        var worker = host.Services.GetRequiredService<Worker>();
 
-    Console.WriteLine($"Temperature: {weatherInformation.Temperature} Humidity: {weatherInformation.Humidity}");
+        await worker.WorkAsync().ConfigureAwait(false);
 
-};
+        await host.StopAsync().ConfigureAwait(false);
+    }
 
-await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
-
-var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
-    .WithTopicFilter(
-        f =>
-        {
-            f.WithTopic("rtl_433/Ecowitt");
-        })
-    .Build();
-
-await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
-
-Console.WriteLine("MQTT client subscribed to topic rtl_433/Ecowitt");
-
-await Task.Delay(-1).ConfigureAwait(false);
+    private static IHost CreateHost() =>
+        Host
+            .CreateDefaultBuilder()
+            .ConfigureServices((context, services) =>
+            {
+                services
+                    .AddSingleton<IDecoder, Decoder>()
+                    .AddSingleton<IValidator, Validator>()
+                    .AddSingleton<Worker>()
+                    .Configure<ClientOptions>(context.Configuration.GetSection("Client"))
+                    .AddHttpClient<IClient, ProtobufClient>();
+            })
+        .Build();
+}

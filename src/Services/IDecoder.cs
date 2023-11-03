@@ -1,5 +1,8 @@
-namespace Temperature.Receiver.Model;
+using Temperature.Receiver.Dto;
+using Temperature.Receiver.Model;
+
+namespace Temperature.Receiver.Services;
 public interface IDecoder
 {
-    Task<WeatherInformation> DecodeMessageAsync(ArraySegment<byte> message);
+    Task<WeatherInformation> DecodeMessageAsync(Message message);
 }
