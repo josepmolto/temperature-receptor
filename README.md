@@ -1,5 +1,15 @@
 # RTL_433 useful commands
 
+## How to see the subscriptions in mosquitto?`
+
+First, connect to the container via terminal
+
+`docker exec -it <mosquitto_container_name> /bin/sh`
+
+Then, use this command to see the subscriptions in a specific topic
+
+`mosquitto_sub -h localhost -t <topic_name>`
+
 ## Show samples
 
 rtl_433 -f 868M -R 0 -X 'n=Ecowitt,m=FSK_PCM,s=58,l=58,r=59392,bits=169' -F json:sample.json
