@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using Temperature.Receiver.Config;
 using Temperature.Receiver.Services;
 
@@ -30,5 +31,9 @@ internal class Program
                     .Configure<ClientOptions>(context.Configuration.GetSection("Client"))
                     .AddHttpClient<IClient, ProtobufClient>();
             })
+            .UseSerilog((context, services, configuration) => configuration
+                .ReadFrom.Configuration(context.Configuration)
+                .Enrich.FromLogContext()
+            )
         .Build();
 }

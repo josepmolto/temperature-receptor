@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
+using Serilog;
 using Temperature.Receiver.Config;
 using Temperature.Receiver.Model;
 
@@ -9,20 +10,26 @@ public class ProtobufClient : IClient
     private const string ProtobufContenType = "application/x-protobuf";
     private readonly HttpClient _httpClient;
     private readonly ClientOptions _options;
+    private readonly ILogger _logger;
 
-    public ProtobufClient(HttpClient httpClient, IOptions<ClientOptions> options)
+    public ProtobufClient(HttpClient httpClient, IOptions<ClientOptions> options, ILogger logger)
     {
         _httpClient = httpClient;
         _options = options.Value;
+        _logger = logger;
     }
 
     public async Task SendAsync(WeatherInformation weatherInformation)
     {
         using var stream = new MemoryStream();
 
+        _logger.Information($"Send {weatherInformation.Temperature} and {weatherInformation.Humidity} to {_options.BaseUrl}");
+
         var httpRequestMessage = CreateHttpRequestMessage(weatherInformation, stream);
 
         var httpResponseMessage = await _httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false);
+
+        _logger.Information($"Received {httpResponseMessage.StatusCode} HTTP response");
 
         if (!httpResponseMessage.IsSuccessStatusCode)
         {
