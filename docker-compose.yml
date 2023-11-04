@@ -6,9 +6,9 @@ services:
     environment:
       - TZ=Europe/Madrid
     volumes:
-      - /mnt/d/Documents/Projects/mosquitto/volumes/config:/mosquitto/config
-      - /mnt/d/Documents/Projects/mosquitto/volumes/data:/mosquitto/data
-      - /mnt/d/Documents/Projects/mosquitto/volumes/log:/mosquitto/log
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
     ports:
       - 1883:1883
       - 9001:9001
