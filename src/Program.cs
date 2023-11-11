@@ -50,6 +50,12 @@ internal class Program
         var username = configuration.GetValue<string>("Client:Username");
         var password = configuration.GetValue<string>("Client:Password");
 
+        if (string.IsNullOrWhiteSpace(username) && string.IsNullOrWhiteSpace(password))
+        {
+            var logger = Log.ForContext<Program>();
+            logger.Warning("Basic Authentication is not well configured");
+        }
+
         return Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{username}:{password}"));
     }
 }
