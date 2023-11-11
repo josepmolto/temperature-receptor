@@ -7,10 +7,10 @@ COPY . ./
 RUN dotnet restore
 # Build and publish a release
 RUN dotnet publish -c Release -o out
+COPY secrets/appsettings.secrets.json /App/out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /App
 COPY --from=build-env /App/out .
-COPY secrets/appsettings.secrets.json .
 ENTRYPOINT ["dotnet", "Temperature.Receiver.dll"]
