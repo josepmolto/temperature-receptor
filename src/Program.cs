@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Temperature.Receiver.Config;
@@ -22,6 +23,7 @@ internal class Program
     private static IHost CreateHost() =>
         Host
             .CreateDefaultBuilder()
+            .ConfigureHostConfiguration(c => c.AddJsonFile("./appsettings.secrets.json", optional: true))
             .ConfigureServices((context, services) =>
             {
                 services
@@ -29,11 +31,25 @@ internal class Program
                     .AddSingleton<IValidator, Validator>()
                     .AddSingleton<Worker>()
                     .Configure<ClientOptions>(context.Configuration.GetSection("Client"))
-                    .AddHttpClient<IClient, ProtobufClient>();
+                    .AddHttpClient<IClient, ProtobufClient>(client =>
+                    {
+                        var token = GetBasicAuthenticationToken(context.Configuration);
+
+                        client.DefaultRequestHeaders.Add("Authorization", $"Basic {token}");
+                    });
             })
             .UseSerilog((context, services, configuration) => configuration
                 .ReadFrom.Configuration(context.Configuration)
                 .Enrich.FromLogContext()
             )
         .Build();
+
+
+    private static string GetBasicAuthenticationToken(IConfiguration configuration)
+    {
+        var username = configuration.GetValue<string>("Client:Username");
+        var password = configuration.GetValue<string>("Client:Password");
+
+        return Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{username}:{password}"));
+    }
 }
