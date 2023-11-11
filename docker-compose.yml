@@ -22,6 +22,8 @@ services:
       context: ./
     depends_on:
       - mosquitto
+    volumes:
+      - ./secrets/*:/App
     networks:
       - thermometer-network
 

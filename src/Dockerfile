@@ -7,7 +7,6 @@ COPY . ./
 RUN dotnet restore
 # Build and publish a release
 RUN dotnet publish -c Release -o out
-COPY appsettings.secrets.json /App/out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
