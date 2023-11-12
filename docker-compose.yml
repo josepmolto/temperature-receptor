@@ -23,7 +23,7 @@ services:
     depends_on:
       - mosquitto
     volumes:
-      - ./secrets/appsettings.secrets.json:/App
+      - ./secrets/appsettings.secrets.json:/App/appsettings.secrets.json
     networks:
       - thermometer-network
 
