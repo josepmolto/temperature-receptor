@@ -43,10 +43,9 @@ ab5555555555545ba9b1e5368fffff54d8000000000
 The humidity is placed before the four "ffff" that are in the middle and it's just to translate the two hexadecimals digits to binary and discard the last bit. Then transform the binary to decimal. In the example.
 x8f = 10001111b => 1000111b = 71 %
 
-The temperature is placed before the two humidity hexadecimals digits and uses 3 hexadecimals digits. First a translation from hexadecimal to binary is needed, then it's necessary to discard the first three digits and the last one. The next step it's transform the binary to integer and we obtain a number. As we observed the value of 118 corresponds to 23º, so we calculate the difference between 118 and the number obtained and finally it's splitted by 10 to obtain the difference. To obtain the temperature, we do the the sum between 23 and the difference.
+The temperature is placed before the two humidity hexadecimals digits and uses 4 hexadecimals digits. First a translation from hexadecimal to binary is needed, then it's necessary to discard the first three digits and the last one. The next step it's transform the binary to integer and we obtain a number. As we observed the value of 400 corresponds to 0º, so we calculate the difference between 400 and the number obtained and finally it's splitted by 10 to obtain the temperature with one decimal.
 
 In the example
-x536 = 010100110110 => 10011011 = 155
-155 - 118 = 37
-37/10 = 3,7
-23 + 3,7 = 26,7
+xe536 = 1110010100110110 => 001010011011 = 667
+667 - 400 = 267
+267/10 = 26,7
