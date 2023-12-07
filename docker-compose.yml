@@ -34,7 +34,7 @@ services:
     networks:
       - thermometer-network
     devices:
-      - "/dev/bus/usb/001/004"
+      - "/dev/bus/usb/001/003"
     command:
       - "-f"
       - "868M"
