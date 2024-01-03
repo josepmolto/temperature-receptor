@@ -36,7 +36,7 @@ public class Worker
 
             var weatherInformation = await _decoder.DecodeMessageAsync(message);
 
-            if (_validator.HasValidValues(weatherInformation))
+            if (!_validator.HasValidValues(weatherInformation))
             {
                 Console.WriteLine($"Message {message.Rows.First().Data} has data with wrong measurament: T:{weatherInformation.Temperature} | H:{weatherInformation.Humidity}");
                 return;
