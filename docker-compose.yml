@@ -22,15 +22,17 @@ services:
       context: ./
     depends_on:
       - mosquitto
+    restart: unless-stopped
     volumes:
       - ./secrets/appsettings.secrets.json:/App/appsettings.secrets.json
     networks:
       - thermometer-network
 
   rtl_433:
-    image: hertzg/rtl_433:master-alpine-3.18.3
+    image: hertzg/rtl_433:20.11
     depends_on:
       - mosquitto
+    restart: unless-stopped
     networks:
       - thermometer-network
     devices:
