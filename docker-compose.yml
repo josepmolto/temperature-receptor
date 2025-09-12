@@ -1,6 +1,6 @@
 services:
   mosquitto:
-    image: eclipse-mosquitto:2.0.16
+    image: eclipse-mosquitto:2.0.22
     container_name: mosquitto
     environment:
       - TZ=Europe/Madrid
@@ -47,4 +47,3 @@ services:
 
 networks:
   thermometer-network: null
-
