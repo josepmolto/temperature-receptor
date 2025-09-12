@@ -28,7 +28,7 @@ services:
       - thermometer-network
 
   rtl_433:
-    image: hertzg/rtl_433:20.11
+    image: hertzg/rtl_433:22.11
     depends_on:
       - mosquitto
     restart: unless-stopped
