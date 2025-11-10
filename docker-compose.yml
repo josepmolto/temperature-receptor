@@ -3,8 +3,6 @@ services:
     build:
       dockerfile: ./src/Dockerfile
       context: ./
-    depends_on:
-      - mosquitto
     restart: unless-stopped
     volumes:
       - ./secrets/appsettings.secrets.json:/App/appsettings.secrets.json
