@@ -31,6 +31,7 @@ internal class Program
                     .AddSingleton<IValidator, Validator>()
                     .AddSingleton<Worker>()
                     .Configure<ClientOptions>(context.Configuration.GetSection("Client"))
+                    .Configure<QueueOptions>(context.Configuration.GetSection("Queue"))
                     .AddHttpClient<IClient, ProtobufClient>(client =>
                     {
                         var token = GetBasicAuthenticationToken(context.Configuration);

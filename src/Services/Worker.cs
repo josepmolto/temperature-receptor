@@ -1,32 +1,41 @@
+using System.Buffers;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 using MQTTnet;
-using MQTTnet.Client;
+using Temperature.Receiver.Config;
 using Temperature.Receiver.Dto;
 
 namespace Temperature.Receiver.Services;
+
 public class Worker
 {
     private readonly IValidator _validator;
     private readonly IDecoder _decoder;
     private readonly IClient _client;
-    private readonly MqttFactory _mqttFactory;
+    private readonly MqttClientFactory _mqttClientFactory;
+    private readonly QueueOptions _queueOptions;
 
-    public Worker(IValidator validator, IDecoder decoder, IClient client)
+    public Worker(
+        IValidator validator,
+        IDecoder decoder,
+        IClient client,
+        IOptions<QueueOptions> queueOptions)
     {
         _validator = validator;
         _decoder = decoder;
         _client = client;
-        _mqttFactory = new MqttFactory();
+        _mqttClientFactory = new MqttClientFactory();
+        _queueOptions = queueOptions.Value;
     }
 
     public async Task WorkAsync()
     {
-        using var mqttClient = _mqttFactory.CreateMqttClient();
-        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("mosquitto").Build();
+        using var mqttClient = _mqttClientFactory.CreateMqttClient();
+        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(_queueOptions.MosquittoHost).Build();
 
         mqttClient.ApplicationMessageReceivedAsync += async e =>
         {
-            var message = Deserialize(e.ApplicationMessage.PayloadSegment);
+            var message = Deserialize(e.ApplicationMessage.Payload);
 
             if (!_validator.IsValidWeatherStationMessage(message))
             {
@@ -47,7 +56,7 @@ public class Worker
 
         await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
 
-        var mqttSubscribeOptions = _mqttFactory.CreateSubscribeOptionsBuilder()
+        var mqttSubscribeOptions = _mqttClientFactory.CreateSubscribeOptionsBuilder()
             .WithTopicFilter(
                 f =>
                 {
@@ -62,11 +71,13 @@ public class Worker
         await Task.Delay(-1).ConfigureAwait(false);
     }
 
-    private static Message Deserialize(ArraySegment<byte> messageBytes)
+    private static Message Deserialize(ReadOnlySequence<byte> messageBytes)
     {
         var options = CreateJsonSerializerOptions();
 
-        var message = JsonSerializer.Deserialize<Message>(messageBytes, options);
+        var reader = new Utf8JsonReader(messageBytes);
+
+        var message = JsonSerializer.Deserialize<Message>(ref reader, options);
 
         return message;
 

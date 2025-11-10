@@ -4,6 +4,7 @@ using Temperature.Receiver.Model;
 using Temperature.Receiver.Services;
 
 namespace Tests.Temperature.Receiver;
+
 public class DecoderShould
 {
     [Fact]
@@ -27,7 +28,7 @@ public class DecoderShould
         };
         var sut = new Decoder();
 
-        var actualResponse = await sut.DecodeMessageAsync(message).ConfigureAwait(false);
+        var actualResponse = await sut.DecodeMessageAsync(message);
 
         actualResponse.Should().BeEquivalentTo(expectedResponse);
     }
@@ -54,7 +55,7 @@ public class DecoderShould
         };
         var sut = new Decoder();
 
-        var actualResponse = await sut.DecodeMessageAsync(message).ConfigureAwait(false);
+        var actualResponse = await sut.DecodeMessageAsync(message);
 
         actualResponse.Should().BeEquivalentTo(expectedResponse);
     }

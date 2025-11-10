@@ -1,20 +1,4 @@
 services:
-  mosquitto:
-    image: eclipse-mosquitto:2.0.22
-    container_name: mosquitto
-    environment:
-      - TZ=Europe/Madrid
-    volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
-    ports:
-      - 1883:1883
-      - 9001:9001
-    restart: unless-stopped
-    networks:
-      - thermometer-network
-
   receiver:
     build:
       dockerfile: ./src/Dockerfile
@@ -29,8 +13,6 @@ services:
 
   rtl_433:
     image: hertzg/rtl_433:25.02
-    depends_on:
-      - mosquitto
     restart: unless-stopped
     networks:
       - thermometer-network
