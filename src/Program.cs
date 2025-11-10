@@ -32,31 +32,11 @@ internal class Program
                     .AddSingleton<Worker>()
                     .Configure<ClientOptions>(context.Configuration.GetSection("Client"))
                     .Configure<QueueOptions>(context.Configuration.GetSection("Queue"))
-                    .AddHttpClient<IClient, ProtobufClient>(client =>
-                    {
-                        var token = GetBasicAuthenticationToken(context.Configuration);
-
-                        client.DefaultRequestHeaders.Add("Authorization", $"Basic {token}");
-                    });
+                    .AddHttpClient<IClient, ProtobufClient>();
             })
             .UseSerilog((context, services, configuration) => configuration
                 .ReadFrom.Configuration(context.Configuration)
                 .Enrich.FromLogContext()
             )
         .Build();
-
-
-    private static string GetBasicAuthenticationToken(IConfiguration configuration)
-    {
-        var username = configuration.GetValue<string>("Client:Username");
-        var password = configuration.GetValue<string>("Client:Password");
-
-        if (string.IsNullOrWhiteSpace(username) && string.IsNullOrWhiteSpace(password))
-        {
-            var logger = Log.ForContext<Program>();
-            logger.Warning("Basic Authentication is not well configured");
-        }
-
-        return Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{username}:{password}"));
-    }
 }
