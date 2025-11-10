@@ -23,7 +23,7 @@ services:
       - "-X"
       - "n=Ecowitt,m=FSK_PCM,s=58,l=58,r=59392,bits=169"
       - "-F"
-      - "mqtt://mosquitto,retain=0,events=rtl_433/Ecowitt"
+      - "mqtt://192.168.33.114,retain=0,events=rtl_433/Ecowitt"
 
 networks:
   thermometer-network: null
